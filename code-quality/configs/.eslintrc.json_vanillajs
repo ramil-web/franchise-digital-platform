@@ -1,0 +1,17 @@
+{
+  "env": {
+    "browser": true,
+    "commonjs": true,
+    "es6": true,
+    "jquery": true,
+    "amd": true,
+    "mocha": true
+  },
+  "extends": ["airbnb-base", "plugin:prettier/recommended"],
+  "plugins": ["mocha"],
+  "parserOptions": {
+    "parser": "babel-eslint",
+    "sourceType": "module",
+    "ecmaVersion": 6
+  }
+}

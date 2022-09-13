@@ -1,0 +1,9 @@
+{
+  "telemetry.enableTelemetry": false,
+  "workbench.settings.enableNaturalLanguageSearch": false,
+  "telemetry.enableCrashReporter": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "editor.formatOnSave": true
+}

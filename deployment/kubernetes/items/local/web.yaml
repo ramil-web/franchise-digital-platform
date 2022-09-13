@@ -1,0 +1,75 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: fdp-app-web
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: fdp-app-web
+  template:
+    metadata:
+      labels:
+        app: fdp-app-web
+        role: webserver
+    spec:
+      affinity:
+        # try to run on node with cron (shared pvc)
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - fdp-app-cron-laravel
+            topologyKey: "kubernetes.io/hostname"
+      containers:
+        - image: fa:1.0
+          name: web
+          command:
+          - /bin/sh
+          - -c
+          - >
+              date &&
+              supervisord -c /var/www/deployment/configs/supervisord-local.conf
+#          livenessProbe:
+#            # an http probe
+#            httpGet:
+#              path: /web/health
+#              port: 80
+#            initialDelaySeconds: 30
+#            periodSeconds: 10
+#            timeoutSeconds: 5
+#          readinessProbe:
+#            # an http probe
+#            httpGet:
+#              path: /web/health
+#              port: 80
+#            initialDelaySeconds: 30
+#            periodSeconds: 10
+#            timeoutSeconds: 5
+          env:
+          - name: APP_ENVIRONMENT
+            value: development
+          - name: SUPERVISOR_SERVER_USER
+            value: admin
+          - name: SUPERVISOR_SERVER_PASSWORD
+            value: quQ71h8QHhwquQ2
+          ports:
+            - containerPort: 80
+              name: nginx
+            - containerPort: 443
+              name: nginx-ssl
+          volumeMounts:
+          - name: code
+            mountPath: /var/www
+      volumes:
+      - name: code
+        hostPath:
+          path: /mount-fa
